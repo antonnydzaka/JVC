@@ -1,0 +1,28 @@
+# Environment variables
+.env
+backend/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+backend/venv/
+backend/__pycache__/
+
+# Node
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# Database
+*.db
+backend/finance.db
+
+# Reports/JSON
+backend/report.json
+backend/report_output.json
+
+# OS files
+.DS_Store
+Thumbs.db

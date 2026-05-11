@@ -1,0 +1,44 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import os
+
+app = FastAPI()
+
+# Enable CORS for local development
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# --- Your existing API endpoints go here ---
+@app.get("/api/test")
+def test_api():
+    return {"message": "API is working!"}
+
+# --- Add this at the VERY BOTTOM of your main.py file ---
+
+# Get the directory of the current file (backend folder)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Define the path to the frontend build folder (dist)
+FRONTEND_DIST_DIR = os.path.join(BASE_DIR, "..", "frontend", "dist")
+
+# Only mount static files if the directory exists (to prevent errors during local dev if not built yet)
+if os.path.isdir(FRONTEND_DIST_DIR):
+    # Mount the /assets directory for CSS and JS
+    app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIST_DIR, "assets")), name="assets")
+    
+    # Catch-all route to serve the React index.html for client-side routing
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        # Try to serve a specific file if it exists (e.g., vite.svg)
+        potential_file_path = os.path.join(FRONTEND_DIST_DIR, full_path)
+        if os.path.isfile(potential_file_path):
+            return FileResponse(potential_file_path)
+        
+        # Otherwise, serve the React index.html
+        return FileResponse(os.path.join(FRONTEND_DIST_DIR, "index.html"))

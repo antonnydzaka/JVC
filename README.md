@@ -22,7 +22,7 @@ cd backend
 python -m venv venv
 .\venv\Scripts\activate
 pip install -r requirements.txt
-uvicorn main:app --reload
+.\venv\Scripts\python.exe -m uvicorn main:app --reload
 ```
 The API will run at `http://localhost:8000`. Swagger UI is available at `http://localhost:8000/docs`.
 
@@ -31,7 +31,7 @@ Open a new terminal and run:
 ```powershell
 cd frontend
 npm install
-npm run dev
+npm.cmd run dev
 ```
 Open the local URL provided by Vite (usually `http://localhost:5173`) in your browser to view the application.
 

@@ -1,0 +1,30 @@
+# Node
+node_modules
+npm-debug.log
+frontend/dist
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Environment variables
+.env
+.env.local
+
+# Git
+.git
+.gitignore
+
+# SQLite
+*.db
+*.sqlite3
+
+# Local logs
+*.log

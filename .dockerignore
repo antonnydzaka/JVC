@@ -22,9 +22,9 @@ pip-delete-this-directory.txt
 .git
 .gitignore
 
-# SQLite
-*.db
-*.sqlite3
+# SQLite files are needed for the initial deployment to provide dummy data
+# *.db
+# *.sqlite3
 
 # Local logs
 *.log

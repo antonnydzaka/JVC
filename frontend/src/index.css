@@ -1,48 +1,111 @@
-:root {
+/* =============================================
+   LIGHT THEME (default)
+   ============================================= */
+:root,
+[data-theme="light"] {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --bg-base: #f0f6ff;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-inner: rgba(255, 255, 255, 0.6);
+  --bg-thead: rgba(248, 250, 252, 0.98);
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --border: rgba(0, 0, 0, 0.1);
+  --success: #059669;
+  --danger: #dc2626;
+  --spinner-track: rgba(0, 0, 0, 0.1);
+  --header-gradient: linear-gradient(to right, #2563eb, #3b82f6);
+  --bg-gradient-1: hsla(210, 100%, 95%, 1);
+  --bg-gradient-2: hsla(210, 100%, 90%, 0.5);
+  --bg-gradient-3: hsla(210, 100%, 98%, 0.5);
+  --tab-hover-bg: rgba(0, 0, 0, 0.05);
+  --tr-hover-bg: rgba(0, 0, 0, 0.02);
+  --btn-secondary-bg: rgba(0, 0, 0, 0.05);
+  --btn-secondary-hover: rgba(0, 0, 0, 0.1);
+  --drop-area-bg: rgba(255, 255, 255, 0.5);
+  --drop-area-hover: rgba(37, 99, 235, 0.05);
+  --result-card-bg: rgba(255, 255, 255, 0.8);
+  --shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* =============================================
+   DARK THEME
+   ============================================= */
+[data-theme="dark"] {
   --primary: #6366f1;
   --primary-hover: #4f46e5;
-  --bg-dark: #0f172a;
+  --bg-base: #0f172a;
   --bg-card: rgba(30, 41, 59, 0.7);
+  --bg-inner: rgba(15, 23, 42, 0.5);
+  --bg-thead: rgba(30, 41, 59, 0.95);
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --border: rgba(255, 255, 255, 0.1);
   --success: #10b981;
   --danger: #ef4444;
+  --spinner-track: rgba(255, 255, 255, 0.1);
+  --header-gradient: linear-gradient(to right, #818cf8, #c084fc);
+  --bg-gradient-1: hsla(253, 16%, 7%, 1);
+  --bg-gradient-2: hsla(225, 39%, 30%, 0.2);
+  --bg-gradient-3: hsla(339, 49%, 30%, 0.2);
+  --tab-hover-bg: rgba(255, 255, 255, 0.1);
+  --tr-hover-bg: rgba(255, 255, 255, 0.02);
+  --btn-secondary-bg: rgba(255, 255, 255, 0.1);
+  --btn-secondary-hover: rgba(255, 255, 255, 0.2);
+  --drop-area-bg: rgba(15, 23, 42, 0.3);
+  --drop-area-hover: rgba(99, 102, 241, 0.05);
+  --result-card-bg: rgba(15, 23, 42, 0.5);
+  --shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
 }
 
+/* =============================================
+   GLOBAL RESET
+   ============================================= */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+/* =============================================
+   BODY & BACKGROUND
+   ============================================= */
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--bg-dark);
+  background-color: var(--bg-base);
   color: var(--text-main);
   min-height: 100vh;
-  background-image: 
-    radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-    radial-gradient(at 50% 0%, hsla(225,39%,30%,0.2) 0, transparent 50%), 
-    radial-gradient(at 100% 0%, hsla(339,49%,30%,0.2) 0, transparent 50%);
+  background-image:
+    radial-gradient(at 0% 0%,   var(--bg-gradient-1) 0, transparent 50%),
+    radial-gradient(at 50% 0%,  var(--bg-gradient-2) 0, transparent 50%),
+    radial-gradient(at 100% 0%, var(--bg-gradient-3) 0, transparent 50%);
   background-attachment: fixed;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* =============================================
+   LAYOUT
+   ============================================= */
 .app-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
 }
 
+/* =============================================
+   HEADER
+   ============================================= */
 header {
   margin-bottom: 2rem;
   text-align: center;
+  position: relative;
 }
 
 header h1 {
   font-size: 2.5rem;
   font-weight: 800;
-  background: linear-gradient(to right, #818cf8, #c084fc);
+  background: var(--header-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -54,11 +117,41 @@ header p {
   color: var(--text-muted);
 }
 
+/* Theme Toggle Button */
+.theme-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.theme-toggle:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* =============================================
+   TABS
+   ============================================= */
 .tabs {
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .tab-btn {
@@ -74,15 +167,19 @@ header p {
 }
 
 .tab-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--tab-hover-bg);
 }
 
 .tab-btn.active {
   background: var(--primary);
   border-color: var(--primary);
-  box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.39);
+  color: white;
+  box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.4);
 }
 
+/* =============================================
+   GLASS PANEL
+   ============================================= */
 .glass-panel {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -90,15 +187,19 @@ header p {
   padding: 2rem;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
   animation: fadeIn 0.4s ease-out;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
+/* =============================================
+   SECTION TITLE
+   ============================================= */
 .section-title {
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
@@ -107,6 +208,9 @@ header p {
   gap: 0.5rem;
 }
 
+/* =============================================
+   TABLE
+   ============================================= */
 .table-container {
   overflow-x: auto;
   margin-bottom: 2rem;
@@ -132,15 +236,27 @@ th {
 }
 
 tr:hover {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--tr-hover-bg);
 }
 
+/* =============================================
+   GRID
+   ============================================= */
 .grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
 }
 
+@media (max-width: 768px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =============================================
+   FORM
+   ============================================= */
 .form-group {
   margin-bottom: 1.5rem;
 }
@@ -154,7 +270,7 @@ tr:hover {
 
 .form-input {
   width: 100%;
-  background: rgba(15, 23, 42, 0.6);
+  background: var(--bg-inner);
   border: 1px solid var(--border);
   color: var(--text-main);
   padding: 0.75rem 1rem;
@@ -167,6 +283,24 @@ tr:hover {
   border-color: var(--primary);
 }
 
+.input-field {
+  width: 100%;
+  background: var(--bg-inner);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-field:focus {
+  border-color: var(--primary);
+}
+
+/* =============================================
+   BUTTONS
+   ============================================= */
 .btn-primary {
   background: var(--primary);
   color: white;
@@ -192,6 +326,27 @@ tr:hover {
   cursor: not-allowed;
 }
 
+.btn-secondary {
+  background: var(--btn-secondary-bg);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-secondary:hover {
+  background: var(--btn-secondary-hover);
+}
+
+/* =============================================
+   BADGES
+   ============================================= */
 .badge {
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
@@ -214,8 +369,11 @@ tr:hover {
   color: #f59e0b;
 }
 
+/* =============================================
+   LOADING SPINNER
+   ============================================= */
 .loading-spinner {
-  border: 3px solid rgba(255,255,255,0.1);
+  border: 3px solid var(--spinner-track);
   border-radius: 50%;
   border-top: 3px solid var(--primary);
   width: 24px;
@@ -224,10 +382,13 @@ tr:hover {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
+  0%   { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
+/* =============================================
+   FILE DROP AREA
+   ============================================= */
 .file-drop-area {
   border: 2px dashed var(--border);
   border-radius: 1rem;
@@ -235,12 +396,12 @@ tr:hover {
   text-align: center;
   cursor: pointer;
   transition: all 0.2s;
-  background: rgba(15, 23, 42, 0.3);
+  background: var(--drop-area-bg);
 }
 
 .file-drop-area:hover {
   border-color: var(--primary);
-  background: rgba(99, 102, 241, 0.05);
+  background: var(--drop-area-hover);
 }
 
 .file-drop-icon {
@@ -248,48 +409,30 @@ tr:hover {
   margin-bottom: 1rem;
 }
 
+/* =============================================
+   RESULT CARD
+   ============================================= */
 .result-card {
   margin-top: 2rem;
   padding: 1.5rem;
   border-radius: 0.5rem;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--result-card-bg);
   border: 1px solid var(--border);
 }
 
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-main);
-  border: 1px solid var(--border);
-  padding: 0.5rem 1rem;
+/* =============================================
+   INNER PANELS (used inline in JSX)
+   ============================================= */
+.inner-panel {
+  background: var(--bg-inner);
+  padding: 1.5rem;
   border-radius: 0.5rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.input-field {
-  width: 100%;
-  background: rgba(15, 23, 42, 0.6);
   border: 1px solid var(--border);
-  color: var(--text-main);
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  outline: none;
-  transition: border-color 0.2s;
 }
 
-.input-field:focus {
-  border-color: var(--primary);
-}
-
-/* Presentation Mode */
+/* =============================================
+   PRESENTATION MODE
+   ============================================= */
 .presentation-active {
   position: fixed;
   top: 0;
@@ -297,18 +440,20 @@ tr:hover {
   width: 100vw;
   height: 100vh;
   z-index: 9999;
-  background-color: var(--bg-dark);
-  background-image: 
-    radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-    radial-gradient(at 50% 0%, hsla(225,39%,30%,0.2) 0, transparent 50%), 
-    radial-gradient(at 100% 0%, hsla(339,49%,30%,0.2) 0, transparent 50%);
+  background-color: var(--bg-base);
+  background-image:
+    radial-gradient(at 0% 0%,   var(--bg-gradient-1) 0, transparent 50%),
+    radial-gradient(at 50% 0%,  var(--bg-gradient-2) 0, transparent 50%),
+    radial-gradient(at 100% 0%, var(--bg-gradient-3) 0, transparent 50%);
   padding: 3rem !important;
   border-radius: 0 !important;
   border: none !important;
   overflow-y: auto;
 }
 
-/* Print Styles */
+/* =============================================
+   PRINT STYLES
+   ============================================= */
 @media print {
   body {
     background: white !important;

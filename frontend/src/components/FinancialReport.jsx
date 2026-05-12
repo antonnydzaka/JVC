@@ -20,7 +20,7 @@ ChartJS.register(
   Legend
 )
 
-const API_BASE_URL = 'http://localhost:8000/api'
+const API_BASE_URL = '/api'
 
 export default function FinancialReport() {
   const [loading, setLoading] = useState(false)
@@ -106,7 +106,7 @@ export default function FinancialReport() {
     labels: ['Revenue', 'Expenses', 'Net Profit'],
     datasets: [
       {
-        label: 'Amount (USD)',
+        label: 'Amount (IDR)',
         data: [
           plData.Total_Pendapatan || plData.Pendapatan || plData.revenue?.total_revenue || 0, 
           plData.Total_Beban || plData.Beban || plData.expenses?.total_expenses || 0, 
@@ -128,7 +128,7 @@ export default function FinancialReport() {
   }
 
   const formatCurrency = (value) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value || 0);
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value || 0);
   }
 
   return (
@@ -163,7 +163,7 @@ export default function FinancialReport() {
         {/* Profit & Loss Chart */}
         <div>
           <h3 style={{ marginBottom: '1rem', color: 'var(--primary)', fontSize: '1.25rem', fontWeight: 600 }}>Profit & Loss Overview</h3>
-          <div style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '1rem', borderRadius: '0.5rem', border: '1px solid var(--border)' }}>
+          <div style={{ background: 'var(--bg-inner)', padding: '1rem', borderRadius: '0.5rem', border: '1px solid var(--border)' }}>
             <Bar data={chartData} options={{ responsive: true, plugins: { legend: { display: false } } }} />
           </div>
         </div>
@@ -171,7 +171,7 @@ export default function FinancialReport() {
         {/* Balance Sheet Summary */}
         <div>
           <h3 style={{ marginBottom: '1rem', color: 'var(--primary)', fontSize: '1.25rem', fontWeight: 600 }}>Balance Sheet</h3>
-          <div style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ background: 'var(--bg-inner)', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem' }}>
               <span style={{ color: 'var(--text-muted)' }}>Total Assets</span>
               <span style={{ fontWeight: 'bold', color: 'rgb(16, 185, 129)' }}>{formatCurrency(bsData.Total_Aset || bsData.assets?.total_assets)}</span>
@@ -192,7 +192,7 @@ export default function FinancialReport() {
         {/* Cash Flow Statement Summary */}
         <div>
            <h3 style={{ marginBottom: '1rem', color: 'var(--primary)', fontSize: '1.25rem', fontWeight: 600 }}>Cash Flow Statement</h3>
-           <div style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+           <div style={{ background: 'var(--bg-inner)', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem' }}>
               <span style={{ color: 'var(--text-muted)' }}>Operating Activities</span>
               <span style={{ fontWeight: 'bold' }}>{formatCurrency(cfData.Arus_Kas_Operasional?.Net_Arus_Kas || cfData.operating_activities?.net_cash_from_operating_activities)}</span>
@@ -215,7 +215,7 @@ export default function FinancialReport() {
         {/* Raw JSON fallback */}
         <div>
            <h3 style={{ marginBottom: '1rem', color: 'var(--primary)', fontSize: '1.25rem', fontWeight: 600 }}>Raw Output Data</h3>
-           <pre style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '1rem', borderRadius: '0.5rem', border: '1px solid var(--border)', overflowX: 'auto', maxHeight: '250px', fontSize: '0.875rem' }}>
+           <pre style={{ background: 'var(--bg-inner)', padding: '1rem', borderRadius: '0.5rem', border: '1px solid var(--border)', overflowX: 'auto', maxHeight: '250px', fontSize: '0.875rem' }}>
              {JSON.stringify(reportData, null, 2)}
            </pre>
         </div>

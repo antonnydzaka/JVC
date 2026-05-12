@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Plus, Trash2, FileText } from 'lucide-react'
 
-const API_BASE_URL = 'http://localhost:8000/api'
+const API_BASE_URL = '/api'
 
 export default function TransactionInput() {
   const [transactions, setTransactions] = useState([])
@@ -66,7 +66,7 @@ export default function TransactionInput() {
   }
 
   const formatCurrency = (value) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value)
   }
 
   return (
@@ -79,7 +79,7 @@ export default function TransactionInput() {
         {/* Form Section */}
         <div>
           <h3 style={{ marginBottom: '1rem', color: 'var(--primary)', fontSize: '1.25rem', fontWeight: 600 }}>Add New Transaction</h3>
-          <form onSubmit={handleSubmit} style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <form onSubmit={handleSubmit} style={{ background: 'var(--bg-inner)', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>Date</label>
               <input 
@@ -105,7 +105,7 @@ export default function TransactionInput() {
               </select>
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>Amount (USD)</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>Amount (IDR)</label>
               <input 
                 type="number" 
                 step="0.01"
@@ -136,10 +136,10 @@ export default function TransactionInput() {
         {/* List Section */}
         <div>
           <h3 style={{ marginBottom: '1rem', color: 'var(--primary)', fontSize: '1.25rem', fontWeight: 600 }}>Current Transactions</h3>
-          <div style={{ background: 'rgba(15, 23, 42, 0.5)', borderRadius: '0.5rem', border: '1px solid var(--border)', overflow: 'hidden' }}>
+          <div style={{ background: 'var(--bg-inner)', borderRadius: '0.5rem', border: '1px solid var(--border)', overflow: 'hidden' }}>
             <div style={{ maxHeight: '450px', overflowY: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                <thead style={{ position: 'sticky', top: 0, background: 'rgba(30, 41, 59, 0.95)', backdropFilter: 'blur(4px)' }}>
+                <thead style={{ position: 'sticky', top: 0, background: 'var(--bg-thead)', backdropFilter: 'blur(4px)' }}>
                   <tr>
                     <th style={{ padding: '0.75rem 1rem', borderBottom: '1px solid var(--border)', color: 'var(--text-muted)' }}>Date</th>
                     <th style={{ padding: '0.75rem 1rem', borderBottom: '1px solid var(--border)', color: 'var(--text-muted)' }}>Description</th>
@@ -161,7 +161,7 @@ export default function TransactionInput() {
                     </tr>
                   ) : (
                     transactions.map((tx) => (
-                      <tr key={tx.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                      <tr key={tx.id} style={{ borderBottom: '1px solid var(--border)' }}>
                         <td style={{ padding: '0.75rem 1rem' }}>{tx.date}</td>
                         <td style={{ padding: '0.75rem 1rem' }}>{tx.description}</td>
                         <td style={{ padding: '0.75rem 1rem' }}>

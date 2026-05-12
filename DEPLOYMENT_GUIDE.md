@@ -4,33 +4,35 @@ Aplikasi Anda kini sudah siap untuk dideploy! Semua konfigurasi (Dockerfile, Bac
 
 Ikuti instruksi berikut secara berurutan:
 
-### Tahap 1: Persiapan Aplikasi & Google Cloud CLI
-1. Pastikan Anda sudah menginstal **Google Cloud CLI** di komputer Windows Anda. Jika belum, silakan unduh dan instal dari [halaman resmi Google Cloud](https://cloud.google.com/sdk/docs/install).
-2. Buka terminal (Command Prompt atau PowerShell) baru di dalam folder proyek Anda (`c:\Users\Antonny Dzaka F\OneDrive\Documents\ppppp\vibeCoding`).
-3. Login ke akun Google Cloud Anda dengan mengetik:
-   ```powershell
-   gcloud auth login
-   ```
-4. Arahkan *environment* ke ID Project Google Cloud Anda:
-   ```powershell
-   gcloud config set project NAMA_PROJECT_ID_ANDA
-   ```
-   *(Tips: Anda bisa menemukan ID Project Anda di bagian atas dashboard Google Cloud Console).*
+### Tahap 1: Upload File ke Cloud Shell (Cara Paling Mudah)
+Karena terminal lokal Anda bermasalah, kita akan menggunakan **Google Cloud Shell** (Terminal online bawaan Google Cloud). Saya sudah membuatkan file **`vibeCoding-deploy.zip`** di folder proyek Anda yang berisi semua file siap deploy.
 
-### Tahap 2: Proses Deploy!
-Masih di terminal yang sama (berada di *root folder* proyek Anda), jalankan perintah magis ini:
+1. Buka browser dan pergi ke **[Google Cloud Console](https://console.cloud.google.com/)**. Pastikan ID Project Anda sudah benar di bagian atas.
+2. Di pojok kanan atas, klik ikon **"Activate Cloud Shell"** (Ikon terminal `>_`). Jendela terminal akan terbuka di bagian bawah layar browser.
+3. Di menu terminal Cloud Shell tersebut, klik ikon tiga titik vertikal (More) lalu pilih **Upload**.
+4. Pilih file **`vibeCoding-deploy.zip`** yang ada di komputer Anda (`c:\Users\Antonny Dzaka F\OneDrive\Documents\ppppp\vibeCoding\vibeCoding-deploy.zip`) lalu klik **Upload**.
 
-```powershell
+### Tahap 2: Proses Deploy di Cloud Shell!
+Setelah proses upload selesai, jalankan tiga perintah ini satu per satu di dalam terminal Cloud Shell tersebut:
+
+**Ekstrak filenya:**
+```bash
+unzip vibeCoding-deploy.zip -d deploy-folder
+```
+
+**Masuk ke foldernya:**
+```bash
+cd deploy-folder
+```
+
+**Deploy ke Cloud Run!**
+```bash
 gcloud run deploy vibe-coding-app --source . --region asia-southeast2 --allow-unauthenticated
 ```
 
-**Keterangan:**
-- `--source .` berarti Google Cloud akan membangun aplikasi Anda menggunakan file `Dockerfile` yang telah kita siapkan.
-- `--region asia-southeast2` mengarahkan server ke region Jakarta agar aplikasi lebih cepat diakses dari Indonesia.
-
-Ketika ditanya di terminal:
-- Jika muncul pertanyaan "Enable API...?", ketik `y` (Yes) lalu Enter.
-- Tunggu beberapa menit untuk Google Cloud membangun (*build*) aplikasi Anda.
+Ketika ditanya di terminal Cloud Shell:
+- Jika muncul "Enable API...?", ketik `y` (Yes) lalu Enter.
+- Tunggu beberapa menit untuk Google Cloud membangun (*build*) aplikasi Anda secara otomatis di Cloud.
 
 ### Tahap 3: Konfigurasi API Key (PENTING!)
 Setelah aplikasi berhasil ter-deploy, akan muncul **URL Publik** aplikasi Anda. Namun, aplikasi belum bisa digunakan karena membutuhkan API Key Gemini.

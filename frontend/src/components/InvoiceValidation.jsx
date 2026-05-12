@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { UploadCloud, CheckCircle, AlertCircle } from 'lucide-react'
 
-const API_BASE_URL = 'http://localhost:8000/api'
+const API_BASE_URL = '/api'
 
 export default function InvoiceValidation() {
   const [file, setFile] = useState(null)
@@ -114,7 +114,7 @@ export default function InvoiceValidation() {
 
           <div>
             <strong>Extracted Data:</strong>
-            <pre style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '0.5rem', marginTop: '0.5rem', fontSize: '0.875rem', overflowX: 'auto' }}>
+            <pre style={{ background: 'rgba(0,0,0,0.05)', padding: '1rem', borderRadius: '0.5rem', marginTop: '0.5rem', fontSize: '0.875rem', overflowX: 'auto' }}>
               {JSON.stringify(result.data_terbaca_dari_foto || result, null, 2)}
             </pre>
           </div>

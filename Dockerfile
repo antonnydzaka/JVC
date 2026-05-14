@@ -35,5 +35,8 @@ COPY --from=frontend-build /app/frontend/dist /app/frontend/dist
 # Expose the port that Cloud Run expects
 EXPOSE 8080
 
-# Command to start the FastAPI server
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Change working directory to backend so absolute imports work
+WORKDIR /app/backend
+
+# Command to start the FastAPI server using the PORT environment variable
+CMD uvicorn main:app --host 0.0.0.0 --port $PORT

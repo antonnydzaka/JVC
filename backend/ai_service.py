@@ -62,38 +62,51 @@ def generate_financial_report(transactions):
         print(f"Error generating report: {e}")
         return {"error": str(e)}
 
-def validate_invoice(image_path, transaction):
+def validate_invoice_batch(image_paths, transactions):
     client = get_client()
     
-    try:
-        image = PIL.Image.open(image_path)
-    except Exception as e:
-        return {"error": f"Could not open image: {e}"}
+    images = []
+    for path in image_paths:
+        try:
+            images.append(PIL.Image.open(path))
+        except Exception as e:
+            print(f"Could not open image {path}: {e}")
 
-    tx_info = "No database record found"
-    if transaction:
-        tx_info = f"Date: {transaction.date}, Amount: {transaction.amount}, Description: {transaction.description}"
+    tx_text = "Database Records:\n"
+    if transactions:
+        for tx in transactions:
+            tx_text += f"ID: {tx.id}, Date: {tx.date}, Amount: {tx.amount}, Description: {tx.description}\n"
+    else:
+        tx_text = "No database records found.\n"
 
     prompt = f"""
-    You are an AI invoice validator. Please extract the data from this invoice image and cross-check it with the following database record:
-    Database Record: {tx_info}
+    You are an AI invoice validator. I have provided one or more invoice images.
+    Please extract the data from each invoice image and cross-check it sequentially with the following database records:
+    
+    {tx_text}
 
-    Determine if the invoice matches the database record. Return strictly as JSON:
-    {{
-        "status_validasi": "Sesuai" | "Tidak Sesuai",
-        "alasan": "Explanation of why it matches or doesn't match",
-        "data_terbaca_dari_foto": {{
-            "tanggal": "extracted date or null",
-            "total_amount": number or null,
-            "description": "extracted description"
+    For each invoice image, try to find a matching transaction from the database records based on date, amount, and description.
+    Determine if the invoice matches the database record. Return strictly as a JSON array of objects:
+    [
+        {{
+            "filename_or_index": "image 1",
+            "matched_transaction_id": number or null if not found,
+            "status_validasi": "Sesuai" | "Tidak Sesuai" | "Tidak Ditemukan",
+            "alasan": "Explanation of why it matches, doesn't match, or wasn't found",
+            "data_terbaca_dari_foto": {{
+                "tanggal": "extracted date or null",
+                "total_amount": number or null,
+                "description": "extracted description"
+            }}
         }}
-    }}
+    ]
     """
     
     try:
+        contents = images + [prompt]
         response = client.models.generate_content(
             model='gemini-2.5-flash',
-            contents=[image, prompt],
+            contents=contents,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
                 temperature=0.1
@@ -101,5 +114,5 @@ def validate_invoice(image_path, transaction):
         )
         return json.loads(response.text)
     except Exception as e:
-        print(f"Error validating invoice: {e}")
+        print(f"Error validating invoice batch: {e}")
         return {"error": str(e)}

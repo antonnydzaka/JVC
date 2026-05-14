@@ -4,29 +4,29 @@ import { UploadCloud, CheckCircle, AlertCircle } from 'lucide-react'
 const API_BASE_URL = '/api'
 
 export default function InvoiceValidation() {
-  const [file, setFile] = useState(null)
-  const [invoiceId, setInvoiceId] = useState('1')
+  const [files, setFiles] = useState([])
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState(null)
+  const [results, setResults] = useState(null)
   const [error, setError] = useState(null)
 
   const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0])
+    if (e.target.files) {
+      setFiles(Array.from(e.target.files))
     }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!file || !invoiceId) return
+    if (!files || files.length === 0) return
 
     setLoading(true)
     setError(null)
-    setResult(null)
+    setResults(null)
 
     const formData = new FormData()
-    formData.append('file', file)
-    formData.append('invoice_id', invoiceId)
+    files.forEach((file) => {
+      formData.append('files', file)
+    })
 
     try {
       const response = await fetch(`${API_BASE_URL}/invoice/validate`, {
@@ -35,9 +35,9 @@ export default function InvoiceValidation() {
       })
       
       const data = await response.json()
-      if (!response.ok) throw new Error(data.detail || 'Failed to validate invoice')
+      if (!response.ok) throw new Error(data.detail || 'Failed to validate invoices')
       
-      setResult(data)
+      setResults(data)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -54,35 +54,25 @@ export default function InvoiceValidation() {
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Invoice ID (Database)</label>
-          <input 
-            type="number" 
-            className="form-input" 
-            value={invoiceId} 
-            onChange={(e) => setInvoiceId(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Invoice Image</label>
+          <label>Invoice Images</label>
           <div className="file-drop-area" onClick={() => document.getElementById('file-upload').click()}>
             <UploadCloud className="file-drop-icon" size={48} />
-            <p>{file ? file.name : 'Click to browse or drag and drop your image here'}</p>
+            <p>{files.length > 0 ? `${files.length} file(s) selected` : 'Click to browse or drag and drop your images here'}</p>
             <input 
               id="file-upload" 
               type="file" 
               accept="image/*" 
+              multiple
               style={{ display: 'none' }} 
               onChange={handleFileChange}
             />
           </div>
         </div>
 
-        <button type="submit" className="btn-primary" disabled={loading || !file}>
+        <button type="submit" className="btn-primary" disabled={loading || files.length === 0}>
           {loading ? (
-            <><div className="loading-spinner" style={{ width: '16px', height: '16px', borderWidth: '2px' }}></div> Validating with Gemini...</>
-          ) : 'Validate Invoice'}
+            <><div className="loading-spinner" style={{ width: '16px', height: '16px', borderWidth: '2px' }}></div> Validating Batch...</>
+          ) : 'Validate Invoices'}
         </button>
       </form>
 
@@ -94,30 +84,38 @@ export default function InvoiceValidation() {
         </div>
       )}
 
-      {result && (
-        <div className="result-card" style={{ borderColor: result.status_validasi === 'Sesuai' ? 'var(--success)' : 'var(--danger)' }}>
-          <h3 style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.5rem',
-            color: result.status_validasi === 'Sesuai' ? 'var(--success)' : 'var(--danger)',
-            marginBottom: '1rem'
-          }}>
-            {result.status_validasi === 'Sesuai' ? <CheckCircle size={24} /> : <AlertCircle size={24} />}
-            Status: {result.status_validasi}
-          </h3>
-          
-          <div style={{ marginBottom: '1rem' }}>
-            <strong>Reason:</strong>
-            <p style={{ color: 'var(--text-muted)', marginTop: '0.25rem' }}>{result.alasan}</p>
-          </div>
+      {results && Array.isArray(results) && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
+          {results.map((res, index) => (
+            <div key={index} className="result-card" style={{ borderColor: res.status_validasi === 'Sesuai' ? 'var(--success)' : (res.status_validasi === 'Tidak Ditemukan' ? 'var(--warning)' : 'var(--danger)') }}>
+              <h3 style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.5rem',
+                color: res.status_validasi === 'Sesuai' ? 'var(--success)' : (res.status_validasi === 'Tidak Ditemukan' ? 'var(--warning)' : 'var(--danger)'),
+                marginBottom: '1rem'
+              }}>
+                {res.status_validasi === 'Sesuai' ? <CheckCircle size={24} /> : <AlertCircle size={24} />}
+                {res.filename_or_index || `Image ${index + 1}`} - Status: {res.status_validasi}
+              </h3>
+              
+              <div style={{ marginBottom: '1rem' }}>
+                <strong>Matched Transaction ID:</strong> {res.matched_transaction_id || 'None'}
+              </div>
 
-          <div>
-            <strong>Extracted Data:</strong>
-            <pre style={{ background: 'rgba(0,0,0,0.05)', padding: '1rem', borderRadius: '0.5rem', marginTop: '0.5rem', fontSize: '0.875rem', overflowX: 'auto' }}>
-              {JSON.stringify(result.data_terbaca_dari_foto || result, null, 2)}
-            </pre>
-          </div>
+              <div style={{ marginBottom: '1rem' }}>
+                <strong>Reason:</strong>
+                <p style={{ color: 'var(--text-muted)', marginTop: '0.25rem' }}>{res.alasan}</p>
+              </div>
+
+              <div>
+                <strong>Extracted Data:</strong>
+                <pre style={{ background: 'rgba(0,0,0,0.05)', padding: '1rem', borderRadius: '0.5rem', marginTop: '0.5rem', fontSize: '0.875rem', overflowX: 'auto' }}>
+                  {JSON.stringify(res.data_terbaca_dari_foto || res, null, 2)}
+                </pre>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

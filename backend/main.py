@@ -5,8 +5,10 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 import os
 import shutil
+import pandas as pd
+import io
 
-from . import models, schemas, database, ai_service
+import models, schemas, database, ai_service
 
 # Create DB tables
 models.Base.metadata.create_all(bind=database.engine)
@@ -63,27 +65,63 @@ def get_financial_report(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=report["error"])
     return report
 
-@app.post("/api/invoice/validate")
-async def validate_invoice_upload(file: UploadFile = File(...), invoice_id: int = Form(...), db: Session = Depends(get_db)):
-    # Get transaction record
-    transaction = db.query(models.Transaction).filter(models.Transaction.id == invoice_id).first()
-    
-    # Save uploaded file temporarily
-    temp_file_path = f"temp_{file.filename}"
-    with open(temp_file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-        
+@app.post("/api/transactions/upload")
+async def upload_transactions(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    content = await file.read()
     try:
-        # Call AI service
-        result = ai_service.validate_invoice(temp_file_path, transaction)
+        if file.filename.endswith('.csv'):
+            df = pd.read_csv(io.BytesIO(content))
+        elif file.filename.endswith(('.xls', '.xlsx')):
+            df = pd.read_excel(io.BytesIO(content))
+        else:
+            raise HTTPException(status_code=400, detail="Invalid file format. Please upload CSV or Excel.")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error reading file: {str(e)}")
+    
+    df.columns = df.columns.str.lower().str.strip()
+    
+    required = {"date", "amount", "account_type", "description"}
+    if not required.issubset(set(df.columns)):
+        raise HTTPException(status_code=400, detail=f"Missing required columns. Expected: {required}")
+    
+    count = 0
+    for _, row in df.iterrows():
+        try:
+            tx = models.Transaction(
+                date=str(row['date']).split(' ')[0], # Ensure just date part if datetime
+                amount=float(row['amount']),
+                account_type=str(row['account_type']).strip(),
+                description=str(row['description']).strip()
+            )
+            db.add(tx)
+            count += 1
+        except Exception as e:
+            # Skip invalid rows or handle error
+            pass
+            
+    db.commit()
+    return {"message": f"Successfully uploaded {count} transactions."}
+
+@app.post("/api/invoice/validate")
+async def validate_invoice_upload(files: list[UploadFile] = File(...), db: Session = Depends(get_db)):
+    transactions = db.query(models.Transaction).all()
+    
+    temp_files = []
+    try:
+        for file in files:
+            temp_path = f"temp_{file.filename}"
+            with open(temp_path, "wb") as buffer:
+                shutil.copyfileobj(file.file, buffer)
+            temp_files.append(temp_path)
+            
+        result = ai_service.validate_invoice_batch(temp_files, transactions)
         if "error" in result:
             raise HTTPException(status_code=500, detail=result["error"])
+        return result
     finally:
-        # Cleanup
-        if os.path.exists(temp_file_path):
-            os.remove(temp_file_path)
-            
-    return result
+        for path in temp_files:
+            if os.path.exists(path):
+                os.remove(path)
 
 # --- Static File Serving for Frontend (Important for Cloud Run Deployment) ---
 

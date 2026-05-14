@@ -10,6 +10,7 @@ import {
 } from 'chart.js'
 import { Bar } from 'react-chartjs-2'
 import { Activity, Download, FileText, MonitorPlay, Maximize, X } from 'lucide-react'
+import html2pdf from 'html2pdf.js'
 
 ChartJS.register(
   CategoryScale,
@@ -48,7 +49,15 @@ export default function FinancialReport() {
   }, [])
 
   const handlePrint = () => {
-    window.print()
+    const element = document.getElementById('report-content')
+    const opt = {
+      margin:       1,
+      filename:     'Financial_Report.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    }
+    html2pdf().from(element).set(opt).save()
   }
 
   const handleDownloadCSV = () => {
@@ -132,7 +141,7 @@ export default function FinancialReport() {
   }
 
   return (
-    <div className={`glass-panel ${presentationMode ? 'presentation-active' : ''}`} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div id="report-content" className={`glass-panel ${presentationMode ? 'presentation-active' : ''}`} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       {presentationMode && (
         <button className="btn-primary no-print" onClick={() => setPresentationMode(false)} style={{ position: 'absolute', top: '1rem', right: '1rem', width: 'auto', zIndex: 1000 }}>
           <X size={18} /> Exit Presentation
@@ -163,6 +172,9 @@ export default function FinancialReport() {
         {/* Profit & Loss Chart */}
         <div>
           <h3 style={{ marginBottom: '1rem', color: 'var(--primary)', fontSize: '1.25rem', fontWeight: 600 }}>Profit & Loss Overview</h3>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+            The Profit and Loss statement summarizes revenues and expenses over a period. It shows the ability of a company to generate profit by increasing revenue, reducing costs, or both.
+          </p>
           <div style={{ background: 'var(--bg-inner)', padding: '1rem', borderRadius: '0.5rem', border: '1px solid var(--border)' }}>
             <Bar data={chartData} options={{ responsive: true, plugins: { legend: { display: false } } }} />
           </div>
@@ -171,6 +183,9 @@ export default function FinancialReport() {
         {/* Balance Sheet Summary */}
         <div>
           <h3 style={{ marginBottom: '1rem', color: 'var(--primary)', fontSize: '1.25rem', fontWeight: 600 }}>Balance Sheet</h3>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+            The Balance Sheet provides a snapshot of a company's financial position at a single point in time, showing what it owns (assets), what it owes (liabilities), and the owner's equity.
+          </p>
           <div style={{ background: 'var(--bg-inner)', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem' }}>
               <span style={{ color: 'var(--text-muted)' }}>Total Assets</span>
@@ -192,6 +207,9 @@ export default function FinancialReport() {
         {/* Cash Flow Statement Summary */}
         <div>
            <h3 style={{ marginBottom: '1rem', color: 'var(--primary)', fontSize: '1.25rem', fontWeight: 600 }}>Cash Flow Statement</h3>
+           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+             The Cash Flow statement tracks the flow of cash into and out of the business. It indicates how well a company manages its cash position to fund operations and investments.
+           </p>
            <div style={{ background: 'var(--bg-inner)', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem' }}>
               <span style={{ color: 'var(--text-muted)' }}>Operating Activities</span>
@@ -210,14 +228,6 @@ export default function FinancialReport() {
               <span style={{ fontWeight: 'bold', color: 'rgb(16, 185, 129)', fontSize: '1.1rem' }}>{formatCurrency(cfData.Saldo_Kas_Akhir || cfData.ending_cash_balance)}</span>
             </div>
           </div>
-        </div>
-
-        {/* Raw JSON fallback */}
-        <div>
-           <h3 style={{ marginBottom: '1rem', color: 'var(--primary)', fontSize: '1.25rem', fontWeight: 600 }}>Raw Output Data</h3>
-           <pre style={{ background: 'var(--bg-inner)', padding: '1rem', borderRadius: '0.5rem', border: '1px solid var(--border)', overflowX: 'auto', maxHeight: '250px', fontSize: '0.875rem' }}>
-             {JSON.stringify(reportData, null, 2)}
-           </pre>
         </div>
       </div>
     </div>

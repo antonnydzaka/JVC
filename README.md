@@ -38,3 +38,5 @@ Open the local URL provided by Vite (usually `http://localhost:5173`) in your br
 ## Features
 - **Financial Reports**: Fetches raw transactions from the SQLite database and uses Gemini AI to compile Balance Sheet, Profit & Loss, and Cash Flow statements. Displayed dynamically with Chart.js.
 - **Invoice Validation**: Upload an invoice photo. The backend uses Gemini Vision to extract details from the image, cross-references it with database records, and outputs a validation status (Sesuai/Tidak Sesuai) and reasoning.
+
+https://financial-dashboard-427576652100.asia-southeast1.run.app
